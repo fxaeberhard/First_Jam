@@ -17,7 +17,8 @@ public class SoundEffects : MonoBehaviour
     AudioSource Bass;
     [SerializeField]
     AudioSource base1;
-    int targetLeft;
+    int targetRemaining;
+    bool restart = true;
     
 
 
@@ -28,25 +29,30 @@ public class SoundEffects : MonoBehaviour
             Debug.Log("Multiple instances of SoundEffects!");
         }
         Instance = this;
+        //Bass = GetComponent<AudioSource>();
         DontDestroyOnLoad(transform.gameObject);
+        
     }
 
     void Start()
     {
-        targetLeft = GameObject.FindGameObjectsWithTag("Item").Length;
-        Bass = GetComponent<AudioSource>();
+        //Bass.Play();
+
     }
 
     void Update()
     {
-
-      if(targetLeft <= 4)
+        targetRemaining = GameObject.FindGameObjectsWithTag("Item").Length;
+        
+        if (!Bass.isPlaying && targetRemaining <= 4)
         {
-           if (!Bass.isPlaying)
-                {
-                Bass.Play();
-                }
+            Bass.enabled = true;
         }
+       
+        //Debug.Log("target" + targetRemaining);
+//        if (targetRemaining <= 4 && (!Bass.isPlaying))
+        
+       
     }
     public void PickItem()
     {

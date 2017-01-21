@@ -24,12 +24,13 @@ public class PlayerCharacter : MonoBehaviour
     float DAMPING = .99f;
     float Timer = 0;
     float TimeBeforeRestart = 1f;
+    float countItem = 0;
 
     [SerializeField]
     float MAXTIME = 20;
 
     bool Started = false;
-
+    bool lose = false;
     [SerializeField]
     Text time;
     [SerializeField]
@@ -39,12 +40,19 @@ public class PlayerCharacter : MonoBehaviour
     [SerializeField]
     GameObject Wave2;
     float waveSpawnTime = 0.08f;
-
+    Vector3 DefaultScale = new Vector3(1.4f,1.4f,0);
+    Vector3 newScale = new Vector3(0.7f,0.7f, 0);
+    bool Scaled;
+    
     Animator animator;
 
     float clock = 0;
-    public int targetLeft ;
+    int targetLeft;
 
+    void Awake()
+    {
+      
+    }
     // Use this for initialization
     void Start ()
     {
@@ -52,24 +60,26 @@ public class PlayerCharacter : MonoBehaviour
         GameOverText.SetActive(false);
         targetLeft = GameObject.FindGameObjectsWithTag("Item").Length;
         animator = GetComponent<Animator>();
-        Debug.Log(animator);
-
+       
         vy = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         //Started = true;
         if (clock > MAXTIME)
-        {
+        { 
             GameOverText.SetActive(true);
             Time.timeScale = 0;
             TimeBeforeRestart -= Time.unscaledDeltaTime;
             if (Input.anyKey && TimeBeforeRestart <= 0)
             {
+                
                 restartCurrentScene();
                 Time.timeScale = 1;
+                
             }
         }
 
@@ -91,32 +101,56 @@ public class PlayerCharacter : MonoBehaviour
         
         /////////////MOVE//////////////
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.UpArrow))
-        {
+        { 
+           
             Timer = 0;
             Started = true;
         }
-        if (!Started)
+
+        if (Input.GetKeyUp(KeyCode.DownArrow) || Input.GetKeyUp(KeyCode.UpArrow))
         {
-            return; }
+            Wave.transform.localScale = DefaultScale;
+            Scaled = false;
+        }
+            if (!Started)
+        {
+            return;
+        }
         fy = 0;
-        Debug.Log("y: " + transform.position.y+ "vy: "+ vy+ "dt" + Time.deltaTime);
         Timer += Time.deltaTime;
+
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            //Timer += Time.deltaTime;
+            
             if (Timer < 0.5f)
             {
-                Debug.Log("up");
+                if (!Scaled)
+                {
+                    Wave.transform.localScale = newScale;
+                    Scaled = true;
+                }
                 fy += PLAYERTHRUST;
+
             }
+            
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
+            
             if (Timer < 0.5f)
             {
+                if (!Scaled)
+                {
+                    Wave.transform.localScale = newScale;
+                    Scaled = true;
+                }
                 fy -= PLAYERTHRUST;
             }
+                            
         }
+       
+       
+
 
         float grav = transform.position.y * GRAVITY + Mathf.Sign(transform.position.y) * FIXEDGRAVITY;
         //float grav = transform.position.y * GRAVITY + Mathf.Sign(transform.position.y) * 0.02f;
@@ -178,6 +212,7 @@ public class PlayerCharacter : MonoBehaviour
             //targetLeft = 0;
             Debug.Log("eats");
             animator.SetTrigger("eats");
+            countItem += 1;
         }
 
         if (collider.gameObject.tag == "Limit")
@@ -194,8 +229,10 @@ public class PlayerCharacter : MonoBehaviour
     }
     public void restartCurrentScene()
     {
+       
         int scene = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(scene, LoadSceneMode.Single);
+        
     }
     public void LoadNextScene()
     {
