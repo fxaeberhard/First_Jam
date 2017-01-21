@@ -42,7 +42,7 @@ public class PlayerCharacter : MonoBehaviour
         
         if (clock > MAXTIME)
         {
-            SoundEffects.Instance.Lose();
+            
             GameOverText.SetActive(true);
             Time.timeScale = 0;
             if (Input.anyKey)
