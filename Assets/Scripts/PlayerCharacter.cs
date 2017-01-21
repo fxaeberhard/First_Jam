@@ -14,18 +14,21 @@ public class PlayerCharacter : MonoBehaviour
     float PLAYERTHRUST = 15;
     float MAXFY = 730;
     float Timer = 0;
+    float TimeBeforeRestart = 1f;
 
     float MAXTIME = 20;
     float timeBeforeRestart = 1f;
 
+    bool Started = false;
 
     [SerializeField]
     Text time;
     [SerializeField]
     GameObject GameOverText;
     [SerializeField]Scene LastScene;
-    [SerializeField]GameObject Wave;
+    [SerializeField]Animator Wave;
     float waveSpawnTime = 0.01f;
+
     
 
     float clock = 0;
@@ -37,6 +40,7 @@ public class PlayerCharacter : MonoBehaviour
         GameOverText.SetActive(false);
         targetLeft = GameObject.FindGameObjectsWithTag("Item").Length;
         InvokeRepeating("WaveEffect", waveSpawnTime, waveSpawnTime);
+        
     }
 
     // Update is called once per frame
@@ -49,18 +53,21 @@ public class PlayerCharacter : MonoBehaviour
             
             GameOverText.SetActive(true);
             Time.timeScale = 0;
-            if (Input.anyKey)
+            timeBeforeRestart -= Time.unscaledDeltaTime;
+            if (Input.anyKey && timeBeforeRestart <= 0)
             {
                 restartCurrentScene();
                 Time.timeScale = 1;
             }
+
         }
 
         if(targetLeft == 0)
         {
             
             Time.timeScale = 0;
-            if(Input.anyKey)
+            timeBeforeRestart -= Time.unscaledDeltaTime;
+            if (Input.anyKey && TimeBeforeRestart <= 0)
             {
                 LoadNextScene();
                 Time.timeScale = 1;
@@ -79,6 +86,7 @@ public class PlayerCharacter : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             Timer = 0;
+            Started = true;
         }
         Timer += Time.deltaTime;
         if (Input.GetKey(KeyCode.UpArrow))
@@ -106,15 +114,7 @@ public class PlayerCharacter : MonoBehaviour
         fy = Mathf.Min(fy, MAXFY);
             //Debug.Log("fy" + fy);
 
-        if (Input.GetKeyUp(KeyCode.UpArrow))
-        {
-
-        }
-
-        if(Input.GetKeyUp(KeyCode.DownArrow))
-        {
-
-        }
+      
         //float grav = GRAVITY;
         //if (transform.position.y > 0)
         //{
@@ -128,15 +128,26 @@ public class PlayerCharacter : MonoBehaviour
         //transform.position = new Vector2(0, fy * 0.01f);
         vy += fy * Time.deltaTime;
         vy = vy * 0.99f;
-        transform.position = new Vector2(transform.position.x + 3.5f* Time.deltaTime*vx, vy * Time.deltaTime );
+        
+        
 
-        clock += Time.deltaTime;
+        if(Started)
+        {
+            transform.position = new Vector2(transform.position.x + 3.5f * Time.deltaTime * vx, vy * Time.deltaTime);
+            clock += Time.deltaTime;
+        }
+        
 
         time.text = Mathf.Round((MAXTIME -clock) *100)/100+"";
         //vy += fy * Time.deltaTime;
 
 
 
+    }
+
+    void FixedUpdate()
+    {
+       
     }
     void OnTriggerEnter2D(Collider2D collider)
     {
