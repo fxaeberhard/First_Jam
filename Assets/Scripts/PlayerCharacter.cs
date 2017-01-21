@@ -17,7 +17,6 @@ public class PlayerCharacter : MonoBehaviour
     float TimeBeforeRestart = 1f;
 
     float MAXTIME = 20;
-    float timeBeforeRestart = 1f;
 
     bool Started = false;
 
@@ -27,9 +26,13 @@ public class PlayerCharacter : MonoBehaviour
     GameObject GameOverText;
     [SerializeField]Scene LastScene;
     [SerializeField]Animator Wave;
-    float waveSpawnTime = 0.01f;
-
+    [SerializeField]
+    GameObject Wave2;
+    float waveSpawnTime = 0.08f;
     
+    
+
+    Animator animator;
 
     float clock = 0;
     int targetLeft ;
@@ -37,24 +40,22 @@ public class PlayerCharacter : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
+        InvokeRepeating("WaveEffect", waveSpawnTime, waveSpawnTime);
         GameOverText.SetActive(false);
         targetLeft = GameObject.FindGameObjectsWithTag("Item").Length;
-        InvokeRepeating("WaveEffect", waveSpawnTime, waveSpawnTime);
-        
+        animator = GetComponent<Animator>();
+        Debug.Log(animator);
     }
 
     // Update is called once per frame
     void Update() 
     {
-
-        
         if (clock > MAXTIME)
         {
-            
             GameOverText.SetActive(true);
             Time.timeScale = 0;
-            timeBeforeRestart -= Time.unscaledDeltaTime;
-            if (Input.anyKey && timeBeforeRestart <= 0)
+            TimeBeforeRestart -= Time.unscaledDeltaTime;
+            if (Input.anyKey && TimeBeforeRestart <= 0)
             {
                 restartCurrentScene();
                 Time.timeScale = 1;
@@ -66,12 +67,11 @@ public class PlayerCharacter : MonoBehaviour
         {
             
             Time.timeScale = 0;
-            timeBeforeRestart -= Time.unscaledDeltaTime;
+            TimeBeforeRestart -= Time.unscaledDeltaTime;
             if (Input.anyKey && TimeBeforeRestart <= 0)
             {
                 LoadNextScene();
                 Time.timeScale = 1;
-                
             }
         }
         if (Input.GetKeyDown(KeyCode.Q))
@@ -81,12 +81,13 @@ public class PlayerCharacter : MonoBehaviour
         }
 
 
-
+        
         /////////////MOVE//////////////
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             Timer = 0;
             Started = true;
+            
         }
         Timer += Time.deltaTime;
         if (Input.GetKey(KeyCode.UpArrow))
@@ -100,10 +101,9 @@ public class PlayerCharacter : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            if (Timer > 0.5f)
+            if (Timer < 0.5f)
             {
                 fy -= PLAYERTHRUST;
-
             }
         }
 
@@ -128,21 +128,15 @@ public class PlayerCharacter : MonoBehaviour
         //transform.position = new Vector2(0, fy * 0.01f);
         vy += fy * Time.deltaTime;
         vy = vy * 0.99f;
-        
-        
 
         if(Started)
         {
             transform.position = new Vector2(transform.position.x + 3.5f * Time.deltaTime * vx, vy * Time.deltaTime);
             clock += Time.deltaTime;
         }
-        
 
         time.text = Mathf.Round((MAXTIME -clock) *100)/100+"";
         //vy += fy * Time.deltaTime;
-
-
-
     }
 
     void FixedUpdate()
@@ -157,12 +151,17 @@ public class PlayerCharacter : MonoBehaviour
             vy += 1;
             Destroy(collider.gameObject);
             targetLeft -= 1;
+            //targetLeft = 0;
+            Debug.Log("eats");
+            animator.SetTrigger("eats");
+
 
         }
         if (collider.gameObject.tag == "Limit")
         {
             SoundEffects.Instance.KnockLimit();
             vx = vx *-1;
+            transform.localScale = new Vector3(vx, 1, 1);
         }
         if (collider.gameObject.tag == "LimitVertical")
         {
@@ -178,9 +177,11 @@ public class PlayerCharacter : MonoBehaviour
     public void LoadNextScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        Debug.Log(SceneManager.GetActiveScene().buildIndex);
     }
     void WaveEffect()
     {
         Instantiate(Wave, transform.position, transform.rotation);
     }
+    
 }
