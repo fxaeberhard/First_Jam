@@ -2,6 +2,7 @@
 using System.Collections;
 using InControl;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerCharacter : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class PlayerCharacter : MonoBehaviour
     float Timer = 0;
 
     float MAXTIME = 20;
+    float timeBeforeRestart = 1f;
+
 
     [SerializeField]
     Text time;
@@ -36,12 +39,36 @@ public class PlayerCharacter : MonoBehaviour
     void Update() 
     {
 
-        Debug.Log(GameObject.FindGameObjectsWithTag("Item").Length);
-        if (clock > MAXTIME || targetLeft == 0)
+        
+        if (clock > MAXTIME)
         {
             GameOverText.SetActive(true);
-            return;
+            Time.timeScale = 0;
+            if (Input.anyKey)
+            {
+                restartCurrentScene();
+                Time.timeScale = 1;
+            }
         }
+
+        if(targetLeft == 0)
+        {
+            Time.timeScale = 0;
+            if(Input.anyKey)
+            {
+                LoadNextScene();
+                Time.timeScale = 1;
+                
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            restartCurrentScene();
+            Time.timeScale = 1;
+        }
+
+
+
         /////////////MOVE//////////////
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -123,4 +150,14 @@ public class PlayerCharacter : MonoBehaviour
             fy = fy * -1 * .9f;
         }
     }
+    public void restartCurrentScene()
+    {
+        int scene = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(scene, LoadSceneMode.Single);
+    }
+    public void LoadNextScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
 }
