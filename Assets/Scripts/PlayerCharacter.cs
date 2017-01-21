@@ -42,6 +42,7 @@ public class PlayerCharacter : MonoBehaviour
         
         if (clock > MAXTIME)
         {
+            SoundEffects.Instance.Lose();
             GameOverText.SetActive(true);
             Time.timeScale = 0;
             if (Input.anyKey)
@@ -53,6 +54,7 @@ public class PlayerCharacter : MonoBehaviour
 
         if(targetLeft == 0)
         {
+            SoundEffects.Instance.Win();
             Time.timeScale = 0;
             if(Input.anyKey)
             {
@@ -136,17 +138,20 @@ public class PlayerCharacter : MonoBehaviour
     {
         if (collider.gameObject.tag == "Item")
         {
+            SoundEffects.Instance.PickItem();
             vy += 1;
             Destroy(collider.gameObject);
             targetLeft -= 1;
+
         }
         if (collider.gameObject.tag == "Limit")
         {
+            SoundEffects.Instance.KnockLimit();
             vx = vx *-1;
         }
         if (collider.gameObject.tag == "LimitVertical")
         {
-
+            SoundEffects.Instance.KnockLimit();
             fy = fy * -1 * .9f;
         }
     }
