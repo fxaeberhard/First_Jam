@@ -13,6 +13,13 @@ public class SoundEffects : MonoBehaviour
     AudioClip WinSound;
     [SerializeField]
     AudioClip LoseSound;
+    [SerializeField]
+    AudioSource Bass;
+    [SerializeField]
+    AudioSource base1;
+    int targetLeft;
+    
+
 
     void Awake()
     {
@@ -21,9 +28,26 @@ public class SoundEffects : MonoBehaviour
             Debug.Log("Multiple instances of SoundEffects!");
         }
         Instance = this;
+        DontDestroyOnLoad(transform.gameObject);
     }
 
+    void Start()
+    {
+        targetLeft = GameObject.FindGameObjectsWithTag("Item").Length;
+        Bass = GetComponent<AudioSource>();
+    }
 
+    void Update()
+    {
+
+      if(targetLeft <= 4)
+        {
+           if (!Bass.isPlaying)
+                {
+                Bass.Play();
+                }
+        }
+    }
     public void PickItem()
     {
         MakeSound(PickItemSound);
@@ -46,4 +70,5 @@ public class SoundEffects : MonoBehaviour
     {
         AudioSource.PlayClipAtPoint(originalClip, transform.position);
     }
+   
 }

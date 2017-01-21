@@ -43,7 +43,7 @@ public class PlayerCharacter : MonoBehaviour
     Animator animator;
 
     float clock = 0;
-    int targetLeft ;
+    public int targetLeft ;
 
     // Use this for initialization
     void Start ()
