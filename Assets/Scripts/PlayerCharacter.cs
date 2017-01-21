@@ -23,6 +23,10 @@ public class PlayerCharacter : MonoBehaviour
     Text time;
     [SerializeField]
     GameObject GameOverText;
+    [SerializeField]Scene LastScene;
+    [SerializeField]GameObject Wave;
+    float waveSpawnTime = 0.01f;
+    
 
     float clock = 0;
     int targetLeft ;
@@ -32,7 +36,7 @@ public class PlayerCharacter : MonoBehaviour
     {
         GameOverText.SetActive(false);
         targetLeft = GameObject.FindGameObjectsWithTag("Item").Length;
-
+        InvokeRepeating("WaveEffect", waveSpawnTime, waveSpawnTime);
     }
 
     // Update is called once per frame
@@ -54,7 +58,7 @@ public class PlayerCharacter : MonoBehaviour
 
         if(targetLeft == 0)
         {
-            SoundEffects.Instance.Win();
+            
             Time.timeScale = 0;
             if(Input.anyKey)
             {
@@ -164,5 +168,8 @@ public class PlayerCharacter : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
-
+    void WaveEffect()
+    {
+        Instantiate(Wave, transform.position, transform.rotation);
+    }
 }
