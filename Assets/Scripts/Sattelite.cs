@@ -23,8 +23,8 @@ public class Sattelite : MonoBehaviour
 	
 	void Update ()
     {
-        transform.Translate(Vector3.left * Time.deltaTime );
-        transform.Translate(Vector3.down * Time.deltaTime / 8);
+        transform.Translate(Vector3.left * Time.unscaledDeltaTime );
+        transform.Translate(Vector3.down * Time.unscaledDeltaTime / 8);
         
     }
 

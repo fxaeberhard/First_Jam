@@ -23,7 +23,7 @@ public class PlayerCharacter : MonoBehaviour
     [SerializeField]
     float DAMPING = .99f;
     float Timer = 0;
-    float TimeBeforeRestart = 1f;
+    float TimeBeforeRestart = 0.5f;
     float countItem = 0;
 
     [SerializeField]
@@ -37,8 +37,6 @@ public class PlayerCharacter : MonoBehaviour
     GameObject GameOverText;
     [SerializeField]Scene LastScene;
     [SerializeField]Animator Wave;
-    [SerializeField]
-    GameObject Wave2;
     float waveSpawnTime = 0.08f;
     Vector3 DefaultScale = new Vector3(1.4f,1.4f,0);
     Vector3 newScale = new Vector3(0.7f,0.7f, 0);
