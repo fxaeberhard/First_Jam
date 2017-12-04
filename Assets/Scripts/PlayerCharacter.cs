@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using InControl;
+//using InControl;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -16,8 +16,8 @@ public class PlayerCharacter : MonoBehaviour
     float FIXEDGRAVITY = 0.01f;
     [SerializeField]
     float PLAYERTHRUST = 0.01f;
-    [SerializeField]
-    float PLAYERTHRUSTMAXLENGTH = 0.5f;
+    //[SerializeField]
+    //float PLAYERTHRUSTMAXLENGTH = 0.5f;
     [SerializeField]
     float MAXFY = 4;
     [SerializeField]
@@ -30,7 +30,7 @@ public class PlayerCharacter : MonoBehaviour
     float MAXTIME = 20;
 
     bool Started = false;
-    bool lose = false;
+    //bool lose = false;
     [SerializeField]
     Text time;
     [SerializeField]
@@ -110,87 +110,84 @@ public class PlayerCharacter : MonoBehaviour
             Wave.transform.localScale = DefaultScale;
             Scaled = false;
         }
-            if (!Started)
-        {
-            return;
-        }
-        fy = 0;
-        Timer += Time.deltaTime;
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            
-            if (Timer < 0.5f)
-            {
-                if (!Scaled)
-                {
-                    Wave.transform.localScale = newScale;
-                    Scaled = true;
-                }
-                fy += PLAYERTHRUST;
-
-            }
-            
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            
-            if (Timer < 0.5f)
-            {
-                if (!Scaled)
-                {
-                    Wave.transform.localScale = newScale;
-                    Scaled = true;
-                }
-                fy -= PLAYERTHRUST;
-            }
-                            
-        }
-       
-       
-
-
-        float grav = transform.position.y * GRAVITY + Mathf.Sign(transform.position.y) * FIXEDGRAVITY;
-        //float grav = transform.position.y * GRAVITY + Mathf.Sign(transform.position.y) * 0.02f;
-        //float grav = Mathf.Sign(transform.position.y) * Mathf.Sqrt(Mathf.Abs(transform.position.y)) * GRAVITY;
-
-        //Debug.Log("t" + Timer);
-        fy -= grav;
-
-        //if (Mathf.Abs(fy) > MAXFY)
-        //{
-        //    Debug.Log("limit " + fy);
-        //    fy *= .95f;
-        //}
-        fy = Mathf.Max(fy, -MAXFY);
-        fy = Mathf.Min(fy, MAXFY);
-        //Debug.Log("fy" + fy);
-
-        //float grav = GRAVITY;
-        //if (transform.position.y > 0)
-        //{
-        //    fy -= grav;
-        //}0
-        //if (transform.position.y < 0)
-
-        //{0
-        //    fy += grav;
-        //}
-
-        //transform.position = new Vector2(0, fy * 0.01f);
-        //vy += fy * Time.deltaTime;
-
-        vy = DAMPING * vy + fy * Time.deltaTime;
-        Debug.Log("fy" + fy + " g " + grav + " dx: " + vy * Time.deltaTime);
-
         if (Started)
         {
-            transform.position = new Vector2(transform.position.x + 3.5f * Time.deltaTime * vx, transform.position.y + vy * Time.deltaTime);
-            clock += Time.deltaTime;
-        }
-        //vy = vy * 0.8f;
+            fy = 0;
+            Timer += Time.deltaTime;
 
-        time.text = Mathf.Round((MAXTIME -clock) *100)/100+"";
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+
+                if (Timer < 0.5f)
+                {
+                    if (!Scaled)
+                    {
+                        Wave.transform.localScale = newScale;
+                        Scaled = true;
+                    }
+                    fy += PLAYERTHRUST;
+
+                }
+
+            }
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+
+                if (Timer < 0.5f)
+                {
+                    if (!Scaled)
+                    {
+                        Wave.transform.localScale = newScale;
+                        Scaled = true;
+                    }
+                    fy -= PLAYERTHRUST;
+                }
+
+            }
+
+            float grav = transform.position.y * GRAVITY + Mathf.Sign(transform.position.y) * FIXEDGRAVITY;
+            //float grav = transform.position.y * GRAVITY + Mathf.Sign(transform.position.y) * 0.02f;
+            //float grav = Mathf.Sign(transform.position.y) * Mathf.Sqrt(Mathf.Abs(transform.position.y)) * GRAVITY;
+
+            //Debug.Log("t" + Timer);
+            fy -= grav;
+
+            //if (Mathf.Abs(fy) > MAXFY)
+            //{
+            //    Debug.Log("limit " + fy);
+            //    fy *= .95f;
+            //}
+            fy = Mathf.Max(fy, -MAXFY);
+            fy = Mathf.Min(fy, MAXFY);
+            //Debug.Log("fy" + fy);
+
+            //float grav = GRAVITY;
+            //if (transform.position.y > 0)
+            //{
+            //    fy -= grav;
+            //}0
+            //if (transform.position.y < 0)
+
+            //{0
+            //    fy += grav;
+            //}
+
+            //transform.position = new Vector2(0, fy * 0.01f);
+            //vy += fy * Time.deltaTime;
+
+            vy = DAMPING * vy + fy * Time.deltaTime;
+            // Debug.Log("fy" + fy + " g " + grav + " dx: " + vy * Time.deltaTime);
+
+            if (Started)
+            {
+                transform.position = new Vector2(transform.position.x + 3.5f * Time.deltaTime * vx, transform.position.y + vy * Time.deltaTime);
+                clock += Time.deltaTime;
+            }
+            //vy = vy * 0.8f;
+        }
+
+
+        time.text = Mathf.Max(Mathf.Round((MAXTIME -clock) *100)/100, 0).ToString("00").Replace(".", ":");
         //vy += fy * Time.deltaTime;
     }
 
